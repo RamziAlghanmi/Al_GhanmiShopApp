@@ -4,10 +4,8 @@ import '../models/product.dart';
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // الفئات المسموحة في المتجر (بالعربية)
   static const List<String> storeCategories = ['إلكترونيات', 'ملابس', 'كتب'];
 
-  // جلب جميع المنتجات
   Future<List<Product>> fetchAllProducts() async {
     try {
       QuerySnapshot snapshot = await _firestore.collection('products').get();
@@ -20,7 +18,6 @@ class FirestoreService {
     }
   }
 
-  // جلب منتجات فئة محددة
   Future<List<Product>> fetchProductsByCategory(String category) async {
     try {
       QuerySnapshot snapshot = await _firestore
@@ -33,7 +30,6 @@ class FirestoreService {
     }
   }
 
-  // جلب الفئات المتاحة (نفس الثابت)
   static List<String> getAvailableCategories() {
     return storeCategories;
   }

@@ -29,21 +29,17 @@ class _AddProductScreenState extends State<AddProductScreen> {
     });
 
     try {
-      // تجميع الصور (الصورة الرئيسية + أي صور إضافية)
       List<String> images = [_thumbnailController.text.trim()];
       if (_imageController.text.trim().isNotEmpty) {
         images.add(_imageController.text.trim());
       }
 
-      // إضافة المنتج إلى Firestore
       await FirebaseFirestore.instance.collection('products').add({
         'title': _titleController.text.trim(),
         'description': _descriptionController.text.trim(),
         'price': double.parse(_priceController.text.trim()),
         'thumbnail': _thumbnailController.text.trim(),
         'category': _selectedCategory,
-        'images': images,
-        'createdAt': FieldValue.serverTimestamp(), // حقل زمني اختياري
       });
 
       if (mounted) {
@@ -53,7 +49,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.pop(context); // العودة للصفحة السابقة
+        Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
@@ -91,7 +87,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // حقل اسم المنتج
               TextFormField(
                 controller: _titleController,
                 decoration: const InputDecoration(
@@ -109,7 +104,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
               ),
               const SizedBox(height: 16),
 
-              // حقل الوصف
               TextFormField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(
@@ -128,7 +122,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
               ),
               const SizedBox(height: 16),
 
-              // حقل السعر
               TextFormField(
                 controller: _priceController,
                 decoration: const InputDecoration(
@@ -152,7 +145,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
               ),
               const SizedBox(height: 16),
 
-              // حقل رابط الصورة الرئيسية
               TextFormField(
                 controller: _thumbnailController,
                 decoration: const InputDecoration(
@@ -170,19 +162,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
               ),
               const SizedBox(height: 16),
 
-              // حقل رابط صورة إضافية (اختياري)
-              TextFormField(
-                controller: _imageController,
-                decoration: const InputDecoration(
-                  labelText: 'رابط صورة إضافية (اختياري)',
-                  hintText: 'https://example.com/image2.jpg',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.add_photo_alternate),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // اختيار الفئة
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
                 decoration: const InputDecoration(
@@ -204,7 +183,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
               ),
               const SizedBox(height: 24),
 
-              // زر الحفظ
               SizedBox(
                 width: double.infinity,
                 height: 50,

@@ -6,7 +6,7 @@ import 'package:shop_app/providers/product_provider.dart';
 import 'providers/cart_provider.dart';
 import 'providers/favorites_provider.dart';
 import 'Screens/home_screen.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+
 
 void main() async{
  WidgetsFlutterBinding.ensureInitialized();
