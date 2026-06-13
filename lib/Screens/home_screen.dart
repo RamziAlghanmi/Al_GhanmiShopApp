@@ -17,8 +17,6 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Directionality(
       textDirection: .rtl,
       child: Scaffold(
@@ -89,18 +87,6 @@ class HomeScreen extends StatelessWidget {
                 );
               },
             ),
-
-            IconButton(
-              icon: const Icon(Icons.add_box),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const AddProductScreen()),
-                ).then((_) {
-                  context.read<ProductProvider>().refreshProducts();
-                });
-              },
-            ),
           ],
         ),
         body: Consumer<ProductProvider>(
@@ -124,7 +110,7 @@ class HomeScreen extends StatelessWidget {
               );
             }
             final categorized = productProvider.categorizedProducts;
-           
+
             return RefreshIndicator(
               onRefresh: () => productProvider.refreshProducts(),
               child: SingleChildScrollView(
@@ -140,7 +126,6 @@ class HomeScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (_) => const CategoriesScreen(),
-
                             ),
                           );
                         },
@@ -233,6 +218,17 @@ class HomeScreen extends StatelessWidget {
               ),
             );
           },
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AddProductScreen()),
+            ).then((_) {
+              context.read<ProductProvider>().refreshProducts();
+            });
+          },
+          label: const Icon(Icons.add),
         ),
       ),
     );
