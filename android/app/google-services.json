@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "782942563807",
+    "project_id": "alghanmi-shop",
+    "storage_bucket": "alghanmi-shop.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:782942563807:android:fe500c1dfa570382d0686a",
+        "android_client_info": {
+          "package_name": "com.example.shop_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUdZFI2Ns8FYcp4xPPy4iDXyyBxZOq_tk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
