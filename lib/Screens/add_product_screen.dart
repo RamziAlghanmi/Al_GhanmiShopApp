@@ -1,5 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
@@ -29,11 +30,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
     });
 
     try {
-      List<String> images = [_thumbnailController.text.trim()];
-      if (_imageController.text.trim().isNotEmpty) {
-        images.add(_imageController.text.trim());
-      }
-
       await FirebaseFirestore.instance.collection('products').add({
         'title': _titleController.text.trim(),
         'description': _descriptionController.text.trim(),
@@ -163,7 +159,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
               const SizedBox(height: 16),
 
               DropdownButtonFormField<String>(
-                value: _selectedCategory,
+                initialValue: _selectedCategory,
                 decoration: const InputDecoration(
                   labelText: 'الفئة',
                   border: OutlineInputBorder(),

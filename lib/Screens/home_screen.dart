@@ -1,23 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/Screens/add_product_screen.dart';
-import 'package:shop_app/Screens/category_products_screen.dart';
+import 'package:shop_app/providers/favorites_provider.dart';
+import 'package:shop_app/screens/add_product_screen.dart';
+import 'package:shop_app/screens/cart_screen.dart';
+import 'package:shop_app/screens/categories_screen.dart';
+import 'package:shop_app/screens/category_products_screen.dart';
+import 'package:shop_app/screens/favorites_screen.dart';
+import 'package:shop_app/screens/product_details_screen.dart';
 import 'package:shop_app/custom%20Widget/product_card.dart';
 import 'package:shop_app/custom%20Widget/product_small_card.dart';
+import 'package:shop_app/providers/cart_provider.dart';
 import 'package:shop_app/providers/product_provider.dart';
-import '../models/product.dart';
-import '../providers/cart_provider.dart';
-import 'categories_screen.dart';
-import 'product_details_screen.dart';
-import 'cart_screen.dart';
-import 'favorites_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shop_app/services/auth_service.dart';
+
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final User? user;
+  const HomeScreen({super.key, this.user});
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
+    final auth = AuthService();
+    return  ChangeNotifierProvider<FavoritesProvider>(
+   create: (_) => FavoritesProvider(user!.uid),
+   child: Directionality(
       textDirection: .rtl,
       child: Scaffold(
         appBar: AppBar(
@@ -87,7 +94,33 @@ class HomeScreen extends StatelessWidget {
                 );
               },
             ),
+            IconButton(
+              icon: Icon(Icons.logout),
+              onPressed: () async {
+                await auth.signOut();
+                // لا حاجة لاستدعاء Navigator لأن الـStreamBuilder سيعيد توجيه الشاشة
+              },
+            ),
           ],
+        ),
+        drawer: Drawer(
+          child: ListView(
+            children: [
+              ListTile(
+                title: Text('جميع الفئات'),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => CategoriesScreen()),
+                ),
+              ),
+              ListTile(
+                title: Text('تسجيل الخروج'),
+                onTap: () async {
+                  await auth.signOut();
+                },
+              ),
+            ],
+          ),
         ),
         body: Consumer<ProductProvider>(
           builder: (context, productProvider, child) {
@@ -231,6 +264,7 @@ class HomeScreen extends StatelessWidget {
           label: const Icon(Icons.add),
         ),
       ),
+   ),
     );
   }
 }

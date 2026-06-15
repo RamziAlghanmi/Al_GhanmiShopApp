@@ -1,24 +1,23 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/providers/cart_provider.dart';
+import 'package:shop_app/screens/home_screen.dart';
+import 'package:shop_app/screens/login_screen.dart';
 import 'package:shop_app/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:shop_app/providers/product_provider.dart';
-import 'providers/cart_provider.dart';
-import 'providers/favorites_provider.dart';
-import 'Screens/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shop_app/services/auth_service.dart';
 
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-void main() async{
- WidgetsFlutterBinding.ensureInitialized();
-
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MyApp());
 }
 
-// ignore: must_be_immutable
 class MyApp extends StatelessWidget {
+  final AuthService _auth = AuthService();
   MyApp({super.key});
 
   @override
@@ -27,7 +26,6 @@ class MyApp extends StatelessWidget {
       providers: [
         // ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
-        ChangeNotifierProvider(create: (_) => FavoritesProvider()),
         ChangeNotifierProvider(
           create: (_) => ProductProvider()..loadAllProducts(),
         ),
@@ -38,8 +36,18 @@ class MyApp extends StatelessWidget {
         locale: const Locale('ar'),
 
         theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Cairo'),
-        home: const HomeScreen(),
-        // home: ProductCard(product: pro),
+        home: StreamBuilder<User?>(
+          stream: _auth.user,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Scaffold(body: Center(child: CircularProgressIndicator()));
+            }
+            if (snapshot.hasData && snapshot.data != null) {
+              return HomeScreen(user: snapshot.data!);
+            }
+            return LoginScreen();
+          },
+        ),
       ),
     );
   }

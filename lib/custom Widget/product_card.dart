@@ -29,7 +29,7 @@ class ProductCard extends StatelessWidget {
               child: Image.network(
                 product.thumbnail,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Icon(
+                errorBuilder: (_, _, _) => Icon(
                   getCategoryIcon(product.category),
                   size: 60,
                   color: Colors.blue,

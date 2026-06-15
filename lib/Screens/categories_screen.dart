@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/custom%20Widget/product_card.dart';
 import 'package:shop_app/providers/product_provider.dart';
-import 'category_products_screen.dart';
+import 'package:shop_app/screens/category_products_screen.dart';
 
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({super.key});

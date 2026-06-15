@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/Screens/product_details_screen.dart';
-import '../providers/favorites_provider.dart';
+import 'package:shop_app/providers/favorites_provider.dart';
+import 'package:shop_app/screens/product_details_screen.dart';
+
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});

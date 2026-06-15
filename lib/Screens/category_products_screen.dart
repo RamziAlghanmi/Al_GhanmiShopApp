@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/custom%20Widget/product_small_card.dart';
 import 'package:shop_app/providers/product_provider.dart';
-import 'product_details_screen.dart';
+import 'package:shop_app/screens/product_details_screen.dart';
 
 class CategoryProductsScreen extends StatelessWidget {
   final String category;
