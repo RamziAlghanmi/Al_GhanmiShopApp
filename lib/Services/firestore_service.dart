@@ -18,34 +18,7 @@ class FirestoreService {
     }
   }
 
-  List<Product> loadFavorites(String userId) {
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('favorites')
-        .snapshots()
-        .listen((snapshot) {
-          _favorites = snapshot.docs
-              .map((doc) => Product.fromFirestore(doc))
-              .toList();
-        });
-    return _favorites;
-  }
-Future<void> toggleFavorite(Product product, String userId) async {
-    final docRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('favorites')
-        .doc(product.id);
-
-    final doc = await docRef.get();
-    if (doc.exists) {
-      await docRef.delete();
-    } else {
-      await docRef.set(product.toMap());
-    }
-    
-  }
+  
   Future<List<Product>> fetchProductsByCategory(String category) async {
     try {
       QuerySnapshot snapshot = await _firestore
@@ -62,17 +35,6 @@ Future<void> toggleFavorite(Product product, String userId) async {
     return storeCategories;
   }
 
-  Future<void> removeFromFavorite(Product product, String userId) async {
-     final docRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection('favorites')
-        .doc(product.id);
-
-    final doc = await docRef.get();
-    if (doc.exists) {
-      await docRef.delete();
-    } 
-  }
+  
 
 }
