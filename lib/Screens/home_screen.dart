@@ -20,16 +20,14 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('HOME USER: ${user?.uid}');
+  
     final auth = AuthService();
     if (user == null) {
       return const Scaffold(
         body: Center(child: Text('المستخدم غير مسجل الدخول')),
       );
     }
-    return ChangeNotifierProvider<FavoritesProvider>(
-      create: (_) => FavoritesProvider(user!.uid),
-      child: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: const Text('متجري الإلكتروني'),
           centerTitle: true,
@@ -241,6 +239,7 @@ class HomeScreen extends StatelessWidget {
             );
           },
         ),
+      if(user.uid="64hMTuoZyWROICypGnbaC4r8tio2")
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             Navigator.push(
