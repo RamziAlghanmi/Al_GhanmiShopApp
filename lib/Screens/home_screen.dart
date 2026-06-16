@@ -239,19 +239,21 @@ class HomeScreen extends StatelessWidget {
             );
           },
         ),
-      if(user.uid =="64hMTuoZyWROICypGnbaC4r8tio2")
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const AddProductScreen()),
-            ).then((_) {
-              context.read<ProductProvider>().refreshProducts();
-            });
-          },
-          label: const Icon(Icons.add),
-        ),
-      ),
+        floatingActionButton: user!.uid == "64hMTuoZyWROICypGnbaC4r8tio2"
+            ? FloatingActionButton.extended(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AddProductScreen(),
+                    ),
+                  ).then((_) {
+                    context.read<ProductProvider>().refreshProducts();
+                  });
+                },
+                label: const Icon(Icons.add),
+              )
+            : null,
     );
   }
 }
