@@ -239,7 +239,7 @@ class HomeScreen extends StatelessWidget {
             );
           },
         ),
-      if(user.uid="64hMTuoZyWROICypGnbaC4r8tio2")
+      if(user.uid =="64hMTuoZyWROICypGnbaC4r8tio2")
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             Navigator.push(
