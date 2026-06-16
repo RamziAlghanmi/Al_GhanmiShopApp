@@ -1,39 +1,66 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shop_app/models/product.dart';
-import 'package:shop_app/Services/firestore_service.dart';
 
 class FavoritesProvider extends ChangeNotifier {
-  final FirestoreService _firestoreService = FirestoreService();
   final String userId;
   List<Product> _favoriteItems = [];
-
-  List<Product> get favoriteItems => _favoriteItems;
-
-  int get favoriteItemCount => _favoriteItems.length;
+  StreamSubscription? _favoritesSubscription;
 
   FavoritesProvider(this.userId) {
-    _favoriteItems = _firestoreService.loadFavorites(userId);
-    notifyListeners();
+    _listenToFavorites();
   }
+
+  List<Product> get favoriteItems => _favoriteItems;
+  int get favoriteItemCount => _favoriteItems.length;
+
+  void _listenToFavorites() {
+    _favoritesSubscription = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('favorites')
+        .snapshots()
+        .listen((snapshot) {
+      _favoriteItems = snapshot.docs
+          .map((doc) => Product.fromFirestore(doc))
+          .toList();
+      notifyListeners();
+    });
+  }
+
   Future<void> toggleFavorite(Product product) async {
-    if (isFavorite(product)) {
-      _favoriteItems.removeWhere((item) => item.id == product.id);
+    final docRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('favorites')
+        .doc(product.id);
+
+    final doc = await docRef.get();
+    if (doc.exists) {
+      await docRef.delete();
     } else {
-      _favoriteItems.add(product);
+      await docRef.set(product.toMap());
     }
-
-    notifyListeners();
-
-    await _firestoreService.toggleFavorite(product, userId);
+    
   }
 
   bool isFavorite(Product product) {
     return _favoriteItems.any((item) => item.id == product.id);
   }
+  
+  Future<void> removeFromFavorites(Product product) async {
+    final docRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('favorites')
+        .doc(product.id);
+    await docRef.delete();
+  }
 
-  void removeFromFavorites(Product product) {
-    _firestoreService.removeFromFavorite(product, userId);
-    _favoriteItems = _firestoreService.loadFavorites(userId);
-    notifyListeners();
+  @override
+  void dispose() {
+    _favoritesSubscription?.cancel();
+    super.dispose();
   }
 }
