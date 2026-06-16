@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/providers/cart_provider.dart';
-import 'package:shop_app/screens/home_screen.dart';
-import 'package:shop_app/screens/login_screen.dart';
+import 'package:shop_app/Screens/home_screen.dart';
+import 'package:shop_app/Screens/login_screen.dart';
 import 'package:shop_app/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shop_app/providers/favorites_provider.dart';
 import 'package:shop_app/providers/product_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shop_app/services/auth_service.dart';
+import 'package:shop_app/Services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,16 +25,26 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(
           create: (_) => ProductProvider()..loadAllProducts(),
+        ),
+
+        ChangeNotifierProvider(
+          create: (_) =>
+              FavoritesProvider(FirebaseAuth.instance.currentUser!.uid),
         ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'متجري الإلكتروني',
         locale: const Locale('ar'),
+        builder: (context, child) {
+          return Directionality(
+            textDirection: TextDirection.rtl,
+            child: child!,
+          );
+        },
 
         theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Cairo'),
         home: StreamBuilder<User?>(

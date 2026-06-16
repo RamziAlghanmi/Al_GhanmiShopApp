@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/models/product.dart';
-import 'package:shop_app/services/firestore_service.dart';
-
+import 'package:shop_app/Services/firestore_service.dart';
 
 class FavoritesProvider extends ChangeNotifier {
   final FirestoreService _firestoreService = FirestoreService();
@@ -16,9 +15,16 @@ class FavoritesProvider extends ChangeNotifier {
     _favoriteItems = _firestoreService.loadFavorites(userId);
     notifyListeners();
   }
-
   Future<void> toggleFavorite(Product product) async {
-    return _firestoreService.toggleFavorite(product, userId);
+    if (isFavorite(product)) {
+      _favoriteItems.removeWhere((item) => item.id == product.id);
+    } else {
+      _favoriteItems.add(product);
+    }
+
+    notifyListeners();
+
+    await _firestoreService.toggleFavorite(product, userId);
   }
 
   bool isFavorite(Product product) {

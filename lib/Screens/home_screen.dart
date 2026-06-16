@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/providers/favorites_provider.dart';
-import 'package:shop_app/screens/add_product_screen.dart';
-import 'package:shop_app/screens/cart_screen.dart';
-import 'package:shop_app/screens/categories_screen.dart';
-import 'package:shop_app/screens/category_products_screen.dart';
-import 'package:shop_app/screens/favorites_screen.dart';
-import 'package:shop_app/screens/product_details_screen.dart';
+import 'package:shop_app/Screens/add_product_screen.dart';
+import 'package:shop_app/Screens/cart_screen.dart';
+import 'package:shop_app/Screens/categories_screen.dart';
+import 'package:shop_app/Screens/category_products_screen.dart';
+import 'package:shop_app/Screens/favorites_screen.dart';
+import 'package:shop_app/Screens/product_details_screen.dart';
 import 'package:shop_app/custom%20Widget/product_card.dart';
 import 'package:shop_app/custom%20Widget/product_small_card.dart';
 import 'package:shop_app/providers/cart_provider.dart';
 import 'package:shop_app/providers/product_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shop_app/services/auth_service.dart';
-
+import 'package:shop_app/Services/auth_service.dart';
 
 class HomeScreen extends StatelessWidget {
   final User? user;
@@ -21,11 +20,15 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('HOME USER: ${user?.uid}');
     final auth = AuthService();
-    return  ChangeNotifierProvider<FavoritesProvider>(
-   create: (_) => FavoritesProvider(user!.uid),
-   child: Directionality(
-      textDirection: .rtl,
+    if (user == null) {
+      return const Scaffold(
+        body: Center(child: Text('المستخدم غير مسجل الدخول')),
+      );
+    }
+    return ChangeNotifierProvider<FavoritesProvider>(
+      create: (_) => FavoritesProvider(user!.uid),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('متجري الإلكتروني'),
@@ -94,25 +97,11 @@ class HomeScreen extends StatelessWidget {
                 );
               },
             ),
-            IconButton(
-              icon: Icon(Icons.logout),
-              onPressed: () async {
-                await auth.signOut();
-                // لا حاجة لاستدعاء Navigator لأن الـStreamBuilder سيعيد توجيه الشاشة
-              },
-            ),
           ],
         ),
         drawer: Drawer(
           child: ListView(
             children: [
-              ListTile(
-                title: Text('جميع الفئات'),
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => CategoriesScreen()),
-                ),
-              ),
               ListTile(
                 title: Text('تسجيل الخروج'),
                 onTap: () async {
@@ -264,7 +253,6 @@ class HomeScreen extends StatelessWidget {
           label: const Icon(Icons.add),
         ),
       ),
-   ),
     );
   }
 }

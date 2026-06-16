@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/custom%20Widget/product_card.dart';
 import 'package:shop_app/providers/favorites_provider.dart';
-import 'package:shop_app/screens/product_details_screen.dart';
-
+import 'package:shop_app/Screens/product_details_screen.dart';
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
@@ -43,7 +43,15 @@ class FavoritesScreen extends StatelessWidget {
                       width: 60,
                       height: 60,
                       color: Colors.grey[200],
-                      child: Image.asset(product.thumbnail, fit: .cover),
+                      child: Image.network(
+                        product.thumbnail,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) => Icon(
+                          getCategoryIcon(product.category),
+                          size: 60,
+                          color: Colors.blue,
+                        ),
+                      ),
                     ),
                     title: Text(product.title),
                     subtitle: Text(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/models/product.dart';
-import 'package:shop_app/services/firestore_service.dart';
+import 'package:shop_app/Services/firestore_service.dart';
 
 
 class ProductProvider extends ChangeNotifier {
