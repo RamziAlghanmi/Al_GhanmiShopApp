@@ -27,7 +27,7 @@ jobs:
 
       - run: flutter pub get
 
-      - run: flutter build web --release
+      - run: flutter build web --release --base-href /Al_GhanmiShopApp/
 
       - uses: actions/upload-pages-artifact@v3
         with:
