@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_app/Services/auth_service.dart';
 
@@ -32,15 +33,30 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
           Navigator.pop(context);
         }
-      } catch (e) {
+      } on FirebaseAuthException catch (e) {
+        String message;
+
+        switch (e.code) {
+          case 'invalid-email':
+            message = 'البريد الإلكتروني غير صالح';
+            break;
+
+          case 'user-not-found':
+            message = 'لا يوجد حساب مرتبط بهذا البريد الإلكتروني';
+            break;
+
+          case 'too-many-requests':
+            message = 'تمت المحاولة عدة مرات، حاول لاحقاً';
+            break;
+
+          default:
+            message = 'حدث خطأ أثناء إرسال رابط الاستعادة';
+        }
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('حدث خطأ: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(message), backgroundColor: Colors.red),
           );
-        }
-      } finally {
-        if (mounted) {
-          setState(() => _isLoading = false);
         }
       }
     }

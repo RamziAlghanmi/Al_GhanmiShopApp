@@ -20,7 +20,9 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  
+    ChangeNotifierProvider(
+      create: (_) => FavoritesProvider(user!.uid),
+    );
     final auth = AuthService();
     if (user == null) {
       return const Scaffold(
@@ -28,232 +30,230 @@ class HomeScreen extends StatelessWidget {
       );
     }
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('متجري الإلكتروني'),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.favorite_border),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const FavoritesScreen()),
-                );
-              },
-            ),
+      appBar: AppBar(
+        title: const Text('متجري الإلكتروني'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.favorite_border),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+              );
+            },
+          ),
 
-            Consumer<CartProvider>(
-              builder: (context, cart, child) {
-                return InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: ((context) => const CartScreen()),
-                      ),
-                    );
-                  },
-                  child: Stack(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.shopping_cart),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: ((context) => const CartScreen()),
+          Consumer<CartProvider>(
+            builder: (context, cart, child) {
+              return InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: ((context) => const CartScreen()),
+                    ),
+                  );
+                },
+                child: Stack(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.shopping_cart),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: ((context) => const CartScreen()),
+                          ),
+                        );
+                      },
+                    ),
+                    if (cart.cartItemCount > 0)
+                      Positioned(
+                        right: 8,
+                        top: 8,
+                        child: Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 18,
+                            minHeight: 18,
+                          ),
+                          child: Text(
+                            '${cart.cartItemCount}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
                             ),
-                          );
-                        },
-                      ),
-                      if (cart.cartItemCount > 0)
-                        Positioned(
-                          right: 8,
-                          top: 8,
-                          child: Container(
-                            padding: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            constraints: const BoxConstraints(
-                              minWidth: 18,
-                              minHeight: 18,
-                            ),
-                            child: Text(
-                              '${cart.cartItemCount}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                    ],
-                  ),
-                );
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            ListTile(
+              title: Text('تسجيل الخروج'),
+              onTap: () async {
+                await auth.signOut();
               },
             ),
           ],
         ),
-        drawer: Drawer(
-          child: ListView(
-            children: [
-              ListTile(
-                title: Text('تسجيل الخروج'),
-                onTap: () async {
-                  await auth.signOut();
-                },
-              ),
-            ],
-          ),
-        ),
-        body: Consumer<ProductProvider>(
-          builder: (context, productProvider, child) {
-            if (productProvider.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (productProvider.errorMessage != null) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('خطأ: ${productProvider.errorMessage}'),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => productProvider.loadAllProducts(),
-                      child: const Text('إعادة المحاولة'),
-                    ),
-                  ],
-                ),
-              );
-            }
-            final categorized = productProvider.categorizedProducts;
-
-            return RefreshIndicator(
-              onRefresh: () => productProvider.refreshProducts(),
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const CategoriesScreen(),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.category),
-                        label: const Text('عرض جميع الفئات'),
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 50),
-                        ),
-                      ),
-                    ),
-
-                    ...categorized.entries.map(
-                      (entry) => Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 10),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                              vertical: 8.0,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      getCategoryIcon(entry.key),
-
-                                      size: 30,
-                                      color: Colors.blue,
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      entry.key,
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => CategoryProductsScreen(
-                                          category: entry.key,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: const Text('عرض الكل'),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 200,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10.0,
-                              ),
-                              itemCount: entry.value.length,
-                              itemBuilder: (context, index) {
-                                final product = entry.value[index];
-                                return InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => ProductDetailsScreen(
-                                          product: product,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: ProductSmallCard(product: product),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+      ),
+      body: Consumer<ProductProvider>(
+        builder: (context, productProvider, child) {
+          if (productProvider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (productProvider.errorMessage != null) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('خطأ: ${productProvider.errorMessage}'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => productProvider.loadAllProducts(),
+                    child: const Text('إعادة المحاولة'),
+                  ),
+                ],
               ),
             );
-          },
-        ),
-        floatingActionButton: user!.uid == "64hMTuoZyWROICypGnbaC4r8tio2"
-            ? FloatingActionButton.extended(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const AddProductScreen(),
+          }
+          final categorized = productProvider.categorizedProducts;
+
+          return RefreshIndicator(
+            onRefresh: () => productProvider.refreshProducts(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const CategoriesScreen(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.category),
+                      label: const Text('عرض جميع الفئات'),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 50),
+                      ),
                     ),
-                  ).then((_) {
-                    context.read<ProductProvider>().refreshProducts();
-                  });
-                },
-                label: const Icon(Icons.add),
-              )
-            : null,
+                  ),
+
+                  ...categorized.entries.map(
+                    (entry) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 10),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 8.0,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    getCategoryIcon(entry.key),
+
+                                    size: 30,
+                                    color: Colors.blue,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    entry.key,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => CategoryProductsScreen(
+                                        category: entry.key,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: const Text('عرض الكل'),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 200,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10.0,
+                            ),
+                            itemCount: entry.value.length,
+                            itemBuilder: (context, index) {
+                              final product = entry.value[index];
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => ProductDetailsScreen(
+                                        product: product,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: ProductSmallCard(product: product),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+      floatingActionButton: user!.uid == "64hMTuoZyWROICypGnbaC4r8tio2"
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AddProductScreen()),
+                ).then((_) {
+                  context.read<ProductProvider>().refreshProducts();
+                });
+              },
+              label: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }

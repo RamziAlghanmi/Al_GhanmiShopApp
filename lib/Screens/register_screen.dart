@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_app/Services/auth_service.dart';
 
@@ -14,7 +15,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passController = TextEditingController();
   final AuthService _auth = AuthService();
   String? _error;
-  
+
   void _register() async {
     if (_formKey.currentState!.validate()) {
       try {
@@ -26,8 +27,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (mounted) {
           Navigator.pop(context);
         }
-      } catch (e) {
-        setState(() => _error = e.toString());
+      } on FirebaseAuthException catch (e) {
+        String message;
+
+        switch (e.code) {
+          case 'email-already-in-use':
+            message = 'هذا البريد الإلكتروني مستخدم بالفعل';
+            break;
+
+          case 'invalid-email':
+            message = 'البريد الإلكتروني غير صالح';
+            break;
+
+          case 'weak-password':
+            message = 'كلمة المرور ضعيفة جداً';
+            break;
+
+          default:
+            message = 'حدث خطأ أثناء إنشاء الحساب';
+        }
+
+        setState(() => _error = message);
       }
     }
   }
